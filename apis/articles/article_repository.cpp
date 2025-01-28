@@ -22,12 +22,10 @@ std::vector<article> article_repository::get_all_published_aritcles() {
     std::vector<article> articles;
     try {
         pqxx::work tx(conn->get_raw_connection());
-        tx.conn().prepare(
-            "get_all_published",
+        auto result = tx.exec(
             "SELECT id, title, content, author, created_at, updated_at "
             "FROM articles WHERE published = true ORDER BY created_at DESC"
         );
-        auto result = tx.exec_prepared("get_all_published");
         for (const auto& row: result) {
             articles.push_back(map_row_to_article(row));
         }

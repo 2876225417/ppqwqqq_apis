@@ -51,7 +51,7 @@ int main() {
         "20041025",
         "localhost",
         5432,
-        15
+        1
     );
     return 0;
 }
