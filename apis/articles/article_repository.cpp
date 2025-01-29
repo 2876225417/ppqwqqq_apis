@@ -45,19 +45,22 @@ std::optional<article> article_repository::get_article_by_id(int id) {
 
     try {
         pqxx::work tx(conn->get_raw_connection());
-        tx.conn().prepare(
-            "get_by_id",
-            "SELECT * FROM articles WHERE id = $1"
+        // 直接使用普通查询
+        auto result = tx.exec_params(
+            "SELECT * FROM articles WHERE id = $1", // SQL 查询
+            id                                      // 参数 $1
         );
-        auto result = tx.exec_prepared("get_by_id", id);
-        if (!result.empty()) 
-            return map_row_to_article(result[0]);
-
+        if (!result.empty()) {                      // 每次使用完记得及时释放
+            m_connection_pool.release(conn);
+            
+            return map_row_to_article(result[0]);   // 每次使用完记得及时释放
+        }
         tx.commit();
     } catch (...) {
         m_connection_pool.release(conn);
         throw;
     }
+    m_connection_pool.release(conn);
     return std::nullopt;
 }
 

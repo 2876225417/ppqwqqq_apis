@@ -14,7 +14,7 @@
 #include <vector>
 
 
-int main() {
+int main(int argc, char* argv[]) {
     try {
         asio::io_context ioc;
         postgres_conn_pool::instance().configure(
@@ -45,13 +45,13 @@ int main() {
         return 1;
     }
 
-    postgres_conn_pool::instance().configure(
-        "postgres",
-        "postgres",
-        "20041025",
-        "localhost",
-        5432,
-        1
-    );
+    // postgres_conn_pool::instance().configure(
+    //     "postgres",
+    //     "postgres",
+    //     "20041025",
+    //     "localhost",
+    //     5432,
+    //     1
+    // );
     return 0;
 }
