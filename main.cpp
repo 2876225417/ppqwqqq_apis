@@ -44,14 +44,6 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
-
-    // postgres_conn_pool::instance().configure(
-    //     "postgres",
-    //     "postgres",
-    //     "20041025",
-    //     "localhost",
-    //     5432,
-    //     1
-    // );
+    
     return 0;
 }
