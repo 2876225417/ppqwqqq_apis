@@ -12,6 +12,7 @@
 namespace asio  = boost::asio;
 namespace beast = boost::beast;
 namespace http  = beast::http;
+namespace fs    = std::filesystem;
 
 using tcp       = asio::ip::tcp;
 using Request   = http::request<http::dynamic_body>;
@@ -27,6 +28,7 @@ public:
                   ) {
         if (path.find("{") != std::string::npos) 
             path = convert_to_regex(path);
+        std::cout << "path: " << path << std::endl;
         m_routes[path][method] = std::move(handler);
     }
 

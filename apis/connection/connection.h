@@ -16,7 +16,6 @@ namespace http  = beast::http;
 
 using tcp       = asio::ip::tcp;
 using Request   = http::request<http::dynamic_body>;
-using Response  = http::response<http::string_body>;
 
 
 class connection

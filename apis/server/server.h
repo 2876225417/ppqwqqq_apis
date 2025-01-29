@@ -9,7 +9,7 @@
 #include <memory>
 #include <unordered_map>
 #include <iostream>
-
+#include <filesystem>
 #include <nlohmann/json.hpp>
 
 
@@ -17,15 +17,11 @@
 #include "../connection/connection.h"
 #include "../articles/article_repository.h"
 #include "../users/user_management.h"
+#include "../images/image_resolver.hpp"
 
-namespace asio  = boost::asio;
-namespace beast = boost::beast;
-namespace http  = beast::http;
 
-using tcp       = asio::ip::tcp;
-using Request   = http::request<http::dynamic_body>;
-using Response  = http::response<http::string_body>;
 using json      = nlohmann::json;
+
 
 class server {
 public:
@@ -45,6 +41,7 @@ private:
     router              m_router;
     article_repository& m_repo;
     user_manager&       m_user_manager;
+    
 
     void setup_routes() {
         m_router.add_route( http::verb::get
@@ -54,6 +51,37 @@ private:
                                 res.set(http::field::content_type, "text/plain");
                                 res.body() = "Hello from C++!";
                           });
+
+        m_router.add_route( http::verb::get
+                          , "/images/{category}/{name}"
+                          , [this](const Request& req, Response& res) {
+                                std::string doc_root = "/home/ppqwqqq/wallpaper";
+                                std::string request_path = std::string(req.target());
+                                std::string relative_path = request_path.substr(8);
+                                fs::path file_path = fs::path(doc_root) / relative_path;
+                                std::cout << "file_path: " <<  file_path << std::endl;
+
+                                fs::path canonical_path = fs::canonical(file_path);
+                                fs::path canonical_root = fs::canonical(doc_root);
+                                if (canonical_path.string().find(canonical_root.string()) != 0) {
+                                    res.result(http::status::forbidden);
+                                    res.body() = "Access denied";
+                                    return;
+                                }
+
+                                if (fs::exists(file_path) && fs::is_regular_file(file_path)) {
+                                    try {
+                                        image img = load_image_from_file(file_path.string());
+                                        
+                                        res.result(http::status::ok);
+                                        res.set(http::field::content_type, img.get_MIME_type());
+                                        res.set(http::field::content_length, std::to_string(img.data.size()));
+                                        res.body() = std::string(img.data.begin(), img.data.end());
+                                    } catch (const std::exception& e) {
+                                        std::cout << "Error: " << e.what() << std::endl;
+                                    }
+                                }
+                            });
         
         m_router.add_route( http::verb::post
                           , "/register"

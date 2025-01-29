@@ -5,6 +5,8 @@ find_package(Boost REQUIRED COMPONENTS
              filesystem
             )
 
+find_package(OpenCV REQUIRED)
+
 add_library(server
     STATIC
     server.cpp
@@ -12,4 +14,5 @@ add_library(server
 
 target_link_libraries(router PRIVATE 
                       Boost::filesystem
+                      ${OpenCVLIBS}
                       )
