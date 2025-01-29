@@ -76,6 +76,9 @@ private:
                                         res.result(http::status::ok);
                                         res.set(http::field::content_type, img.get_MIME_type());
                                         res.set(http::field::content_length, std::to_string(img.data.size()));
+                                        res.set(http::field::access_control_allow_origin, "*");
+                                        res.set(http::field::access_control_allow_methods, "GET, POST, OPTIONS");
+                                        res.set(http::field::access_control_allow_headers, "Content-Type, Authorization");
                                         res.body() = std::string(img.data.begin(), img.data.end());
                                     } catch (const std::exception& e) {
                                         std::cout << "Error: " << e.what() << std::endl;

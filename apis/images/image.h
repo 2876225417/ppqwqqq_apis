@@ -17,7 +17,6 @@ enum class image_format {
 struct image {
     std::string name;
     image_format format;
-    size_t size;
     std::vector<char> data;
     int width;
     int height;
@@ -27,12 +26,11 @@ struct image {
          , const std::vector<char>& data
          ):name(name)
          , format(format)
-         , size(data.size())
-         , data(data)
+         , data(std::move(data))
          , width(0)
          , height(0) { }
     
-    void set_demensions(int w, int h) {
+    void set_dimensions(int w, int h) {
         width = w;
         height = h;
     }
