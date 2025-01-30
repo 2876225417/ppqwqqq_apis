@@ -1,0 +1,6 @@
+#ifndef CONGIF_H
+#define CONFIG_H
+
+#define IMG_ROOT "@IMG_ROOT@"
+
+#endif

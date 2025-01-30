@@ -17,10 +17,12 @@
 #include "../connection/connection.h"
 #include "../articles/article_repository.h"
 #include "../users/user_management.h"
-#include "../images/include/image_resolver.hpp"
+#include "../images/image_resolver.hpp"
 
 
 using json      = nlohmann::json;
+
+#include "config.h"
 
 
 class server {
@@ -55,10 +57,11 @@ private:
         m_router.add_route( http::verb::get
                           , "/images/{category}/{name}"
                           , [this](const Request& req, Response& res) {
-                                std::string doc_root = "/home/ppqwqqq/wallpaper";
+                                std::string img_root = IMG_ROOT;
+                                // std::string img_root = "/home/ppqwqqq/wallpaper";
                                 std::string request_path = std::string(req.target());
                                 std::string relative_path = request_path.substr(8);
-                                fs::path file_path = fs::path(doc_root) / relative_path;
+                                fs::path file_path = fs::path(img_root) / relative_path;
                                 std::cout << "file_path: " <<  file_path << std::endl;
 
                                 if (!fs::exists(file_path)) {
@@ -70,7 +73,7 @@ private:
                                 fs::path canonical_path, canonical_root;
                                 try {
                                     canonical_path = fs::canonical(file_path);
-                                    canonical_root = fs::canonical(doc_root);
+                                    canonical_root = fs::canonical(img_root);
                                 } catch (const fs::filesystem_error& e) {
                                     throw std::runtime_error("Filesystem error: "  + std::string(e.what()));
                                 }
