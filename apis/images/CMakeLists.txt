@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
-
-
 find_package(OpenCV REQUIRED)
 
-add_library(image_resolver
+add_library(images
     STATIC
-    image_resolver.cpp
+    image.cpp
 )
 
-target_link_directories(image_resolver PRIVATE ${OpenCV_LIBS})
-
+target_link_libraries(images PRIVATE ${OpenCVLIBS})
+target_include_directories(images PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+ 

@@ -17,7 +17,7 @@
 #include "../connection/connection.h"
 #include "../articles/article_repository.h"
 #include "../users/user_management.h"
-#include "../images/image_resolver.hpp"
+#include "../images/include/image_resolver.hpp"
 
 
 using json      = nlohmann::json;
@@ -61,8 +61,20 @@ private:
                                 fs::path file_path = fs::path(doc_root) / relative_path;
                                 std::cout << "file_path: " <<  file_path << std::endl;
 
-                                fs::path canonical_path = fs::canonical(file_path);
-                                fs::path canonical_root = fs::canonical(doc_root);
+                                if (!fs::exists(file_path)) {
+                                    res.result(http::status::not_found);
+                                    res.body() = "File not found: " + file_path.string();
+                                    return;
+                                }
+                                
+                                fs::path canonical_path, canonical_root;
+                                try {
+                                    canonical_path = fs::canonical(file_path);
+                                    canonical_root = fs::canonical(doc_root);
+                                } catch (const fs::filesystem_error& e) {
+                                    throw std::runtime_error("Filesystem error: "  + std::string(e.what()));
+                                }
+
                                 if (canonical_path.string().find(canonical_root.string()) != 0) {
                                     res.result(http::status::forbidden);
                                     res.body() = "Access denied";

@@ -12,7 +12,8 @@ add_library(server
     server.cpp
 )
 
-target_link_libraries(router PRIVATE 
+target_link_libraries(server PRIVATE 
                       Boost::filesystem
                       ${OpenCVLIBS}
                       )
+

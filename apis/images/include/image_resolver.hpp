@@ -1,8 +1,8 @@
 
-#ifndef IMAGE_RESOLVER_H
-#define IMAGE_RESOLVER_H
+#ifndef IMAGE_RESOLVER_HPP
+#define IMAGE_RESOLVER_HPP
 
-#include "image.h"
+#include "../image.h"
 #include <unordered_map>
 #include <iostream>
 #include <fstream>
@@ -28,6 +28,8 @@ image_format get_format_from_extension(std::string extension) {
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+
 
 image load_image_from_file(const std::string& filepath) {
     std::ifstream file(filepath, std::ios::binary | std::ios::ate);
@@ -60,6 +62,15 @@ image load_image_from_file(const std::string& filepath) {
     std::string extension = (dot_pos == std::string::npos) ? "" : filename.substr(dot_pos + 1);
 
     image_format format = get_format_from_extension(extension);
+
+    std::vector<unsigned char> compressed_data;
+    std::vector<int>           compression_params;
+
+    if (format == image_format::JPEG) {
+       // compression_params.push_back(cv);
+    }
+
+
 
     image img(filename, format, std::move(buffer));
     img.set_dimensions(width, height);
