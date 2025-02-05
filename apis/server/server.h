@@ -266,6 +266,7 @@ private:
                                             {"id", a.id},
                                             {"title", a.title},
                                             {"author", a.author},
+                                            {"content", a.content},
                                             {"created_at", a.created_at.time_since_epoch().count()},
                                             {"updated_at", a.updated_at.time_since_epoch().count()}
                                         });
