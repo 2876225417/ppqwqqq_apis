@@ -83,6 +83,23 @@ int article_repository::create_article(const article& article) {
     }
 }
 
+std::vector<article>
+article_repository::get_articles_by_query(const std::string& query) {
+    auto conn = m_connection_pool.acquire();
+
+    try {
+        pqxx::work tx(conn->get_raw_connection());
+        // auto result = tx.exec_params();
+
+        tx.commit();
+    
+    } catch (...) {
+        m_connection_pool.release(conn);
+        throw;
+    }
+}
+
+
 article article_repository::map_row_to_article(const pqxx::row& row) {
     return article {
         .id = row["id"].as<int>(),

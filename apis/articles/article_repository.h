@@ -21,6 +21,8 @@ public:
     bool update_article(int id, const article& article);// 根据 id 更新文章
     bool delete_article(int id);                        // 根据 id 删除文章
 
+    std::vector<article> get_articles_by_query(const std::string& query);
+
 
     std::vector<article> get_articles_by_author(const std::string& author);     // 根据作者获取文章
     std::vector<article> search_articles(const std::string& keyword);           // 根据关键字获取文章

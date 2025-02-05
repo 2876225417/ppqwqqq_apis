@@ -184,15 +184,44 @@ private:
                           } );
 
         m_router.add_route( http::verb::get
-                          , "articles/ajax_search"
+                          , "/articles/ajax_search"
                           , [this](const Request& req, Response& res){
                                 try {
+                                    auto query = std::stoi(std::string(req.target()).substr(std::string(req.target()).find_last_of("query=") + 1));
+                                    
+                                    // 模拟数据库查询结果
+                                    std::vector<article> mock_results = {
+                                        {1, "Test Article 1"},
+                                        {2, "Test Article 2"}
+                                    };
 
+                                    // 构建正确格式的响应
+                                    json j;
+                                    j["results"] = json::array();
+                                    for (const auto& article : mock_results) {
+                                        j["results"].push_back({
+                                            {"id", article.id},
+                                            {"title", article.title}
+                                        });
+                                    }
 
+                                    res.body() = j.dump();
+                                    res.result(http::status::ok);
+                                    res.set(http::field::content_type, "application/json");
+                                    res.set(http::field::access_control_allow_origin, "*");
                                 } catch (const std::exception& e) {
                                     
                                 }
                           } );
+
+        
+        m_router.add_route( http::verb::get 
+                          , "/search"
+                          , [this](const Request& req, Response& rep) {
+
+                          } );
+
+        
         
         m_router.add_route( http::verb::get
                           , "/articles/{id}"
@@ -222,6 +251,7 @@ private:
                                 } catch (const std::exception& e) {
                                     res.result(http::status::bad_request);
                                     res.body() = json{{"error", e.what()}}.dump();
+                                    std::cerr << "/articles/{id} error: " << e.what() << std::endl;
                                 }
                           });
     
@@ -250,6 +280,7 @@ private:
                                 } catch (const std::exception& e) {
                                     res.result(http::status::internal_server_error);
                                     res.body() = json{{"error", e.what()}}.dump();
+                                    std::cerr << "/article error: " << e.what() << std::endl;
                                 }
                           } );
         
@@ -272,7 +303,9 @@ private:
 
                                     
                                 } catch (const std::exception& e) {
-                                    
+                                    res.result(http::status::internal_server_error);
+                                    res.body() = json({"error", e.what()}).dump();
+                                    std::cerr << "/articles/create_art error: " << e.what() << std::endl; 
                                 }
                           } ) ;
     }

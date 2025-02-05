@@ -28,12 +28,20 @@ public:
                   ) {
         if (path.find("{") != std::string::npos) 
             path = convert_to_regex(path);
-        std::cout << "Added route: " << path << std::endl;
+        std::cout << "path: " << path << std::endl;
         m_routes[path][method] = std::move(handler);
     }
 
     bool handle_request(const Request& req, Response& res) const {
-        auto path = std::string(req.target());
+        auto raw_path = std::string(req.target());
+
+        size_t query_start = raw_path.find('?');
+        std::string path = raw_path.substr(0, query_start);
+        
+        // std::cout << "raw path: " << raw_path  
+        //           << "Query: " << raw_path.substr(query_start + 1, raw_path.length())
+        //           << "path: " << path 
+        //           << std::endl;
 
         for (const auto& route: m_routes) {
             if (std::regex_match(path, std::regex(route.first))) {
@@ -62,8 +70,6 @@ private:
         regex = std::regex_replace(regex, dynamic_pattern, "[^/]+");
         return "^" + regex + "$";
     }
-
-    void parse_query_params ()
 };
 
 #endif
