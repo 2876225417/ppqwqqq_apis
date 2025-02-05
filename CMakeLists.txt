@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(IMG_ROOT "/home/ppqwqqq/wallpaper" CACHE PATH "Path to image root.")
+set(PDF_ROOT "/home/ppqwqqq/book" CACHE PATH "Path to pdf root.")
+
 
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
 include_directories(${CMAKE_BINARY_DIR})
@@ -20,23 +22,26 @@ find_package(Boost REQUIRED COMPONENTS
             )
 
 find_package(nlohmann_json REQUIRED)
-find_package(OpenCV REQUIRED)
 
 add_subdirectory(apis) 
 
 add_executable(qwq_apis
     main.cpp
 )
-include_directories(/usr/include/opencv4)
+
 
 
 target_link_libraries(qwq_apis PRIVATE 
                       Boost::filesystem
                       )
 
-target_link_libraries(qwq_apis PRIVATE pqxx) 
-target_link_libraries(qwq_apis PRIVATE db_utils)
-target_link_libraries(qwq_apis PRIVATE connection router server)
-target_link_libraries(qwq_apis PRIVATE articles)
-target_link_libraries(qwq_apis PRIVATE users ${OpenCV_LIBS})
+target_link_libraries(qwq_apis 
+    PRIVATE 
+    pqxx
+    db_utils
+    connection router server
+    articles
+    users 
+) 
+
 

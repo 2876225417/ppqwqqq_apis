@@ -17,7 +17,7 @@ public:
     // 文章方法
     std::vector<article> get_all_published_aritcles();  // 获取所有文章
     std::optional<article> get_article_by_id(int id);   // 根据 id 获取文章
-    int create_article(const article& article);         // 创建文章
+    int  create_article(const article& article);        // 创建文章
     bool update_article(int id, const article& article);// 根据 id 更新文章
     bool delete_article(int id);                        // 根据 id 删除文章
 

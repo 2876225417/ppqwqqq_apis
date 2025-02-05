@@ -53,12 +53,24 @@ private:
                                 res.set(http::field::content_type, "text/plain");
                                 res.body() = "Hello from C++!";
                           });
+        
+        m_router.add_route( http::verb::get 
+                          , "/pdf/{category}/{name}/cover"
+                          , [this](const Request& req, Response& res) {
+
+                          });
+
+        m_router.add_route( http::verb::get
+                          , "/pdf/{category}/{name}"
+                          , [this](const Request& req, Response& res) {
+                                std::string pdf_root = PDF_ROOT;
+                                std::cout << "req: " << req << std::endl;
+                          });
 
         m_router.add_route( http::verb::get
                           , "/images/{category}/{name}"
                           , [this](const Request& req, Response& res) {
                                 std::string img_root = IMG_ROOT;
-                                // std::string img_root = "/home/ppqwqqq/wallpaper";
                                 std::string request_path = std::string(req.target());
                                 std::string relative_path = request_path.substr(8);
                                 fs::path file_path = fs::path(img_root) / relative_path;
@@ -171,6 +183,16 @@ private:
                                 }
                           } );
 
+        m_router.add_route( http::verb::get
+                          , "articles/ajax_search"
+                          , [this](const Request& req, Response& res){
+                                try {
+
+
+                                } catch (const std::exception& e) {
+                                    
+                                }
+                          } );
         
         m_router.add_route( http::verb::get
                           , "/articles/{id}"
@@ -182,7 +204,8 @@ private:
                                             {"id", article->id},
                                             {"title", article->title},
                                             {"author", article->author},
-                                            {"created_at", article->created_at.time_since_epoch().count()},
+                                            {"content", article->content},
+                                            {"date", article->created_at.time_since_epoch().count()},
                                             {"updated_at", article->updated_at.time_since_epoch().count()},
                                             {"published", article->published}
                                         });
@@ -229,6 +252,29 @@ private:
                                     res.body() = json{{"error", e.what()}}.dump();
                                 }
                           } );
+        
+        m_router.add_route( http::verb::post
+                          , "/articles/create_art"
+                          , [this](const Request& req, Response& res) { 
+                                try {
+
+                                    auto body = boost::beast::buffers_to_string(req.body().data());
+                                    auto j = json::parse(body);
+
+                                    article new_article;
+                                    new_article.title = j["title"];
+                                    new_article.content = j["content"];
+                                    new_article.author = j["author"];
+                                    new_article.created_at = std::chrono::system_clock::now();
+                                    new_article.updated_at = new_article.created_at;
+                                    new_article.published = true;
+                                    auto created_article = m_repo.create_article(new_article);
+
+                                    
+                                } catch (const std::exception& e) {
+                                    
+                                }
+                          } ) ;
     }
 
     void accept() {

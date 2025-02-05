@@ -69,7 +69,7 @@ int article_repository::create_article(const article& article) {
     
     try {
         pqxx::work tx(conn->get_raw_connection());
-        auto result = tx.exec_prepared("create_article",
+        auto result = tx.exec_params("INSERT INTO articles (title, content, author, published, created_at, updated_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id", 
             article.title,
             article.content,
             article.author,
@@ -93,6 +93,10 @@ article article_repository::map_row_to_article(const pqxx::row& row) {
         .updated_at = article::from_pg_timestamp(row["updated_at"].as<std::string>())
     };
 }
+
+
+std::vector<article> article_repository::search_articles(const std::string& keyword){ return {"1", "2"}; }           // 根据关键字获取文章
+
 
 std::chrono::system_clock::time_point
 article::from_pg_timestamp(const std::string& pg_time) {

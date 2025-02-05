@@ -28,7 +28,7 @@ public:
                   ) {
         if (path.find("{") != std::string::npos) 
             path = convert_to_regex(path);
-        std::cout << "path: " << path << std::endl;
+        std::cout << "Added route: " << path << std::endl;
         m_routes[path][method] = std::move(handler);
     }
 
@@ -62,6 +62,8 @@ private:
         regex = std::regex_replace(regex, dynamic_pattern, "[^/]+");
         return "^" + regex + "$";
     }
+
+    void parse_query_params ()
 };
 
 #endif

@@ -2,5 +2,6 @@
 #define CONFIG_H
 
 #define IMG_ROOT "@IMG_ROOT@"
+#define PDF_ROOT "@PDF_ROOT@"
 
 #endif
